@@ -2,19 +2,16 @@ import logging
 import requests
 from telegram import Update
 from telegram.ext import ApplicationBuilder, MessageHandler, CommandHandler, filters, ContextTypes
-import os
 
-# Token and API key from Render Environment Variables
-BOT_TOKEN = os.getenv("BOT_TOKEN")
-PIXELDRAIN_API_KEY = os.getenv("PIXELDRAIN_API_KEY")
+# Directly put your tokens here (Replace with your actual tokens)
+BOT_TOKEN = "1696477109:AAGjp4CaM_9gmOkellZVADTFPqLKFw1P4Ko"
+PIXELDRAIN_API_KEY = "2612bc59-1fa9-4f62-9c7d-db233805d4a7"
 
 logging.basicConfig(level=logging.INFO)
 
-# /start command handler
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("👋 Hello! Send me a file and I’ll upload it to PixelDrain.")
 
-# Handle file uploads
 async def handle_file(update: Update, context: ContextTypes.DEFAULT_TYPE):
     tg_file = update.message.document or update.message.video or update.message.audio
     if not tg_file:
@@ -24,7 +21,6 @@ async def handle_file(update: Update, context: ContextTypes.DEFAULT_TYPE):
     file = await tg_file.get_file()
     byte_data = await file.download_as_bytearray()
 
-    # Upload to Pixeldrain
     response = requests.post(
         "https://pixeldrain.com/api/file",
         headers={"Authorization": f"Bearer {PIXELDRAIN_API_KEY}"},
@@ -38,7 +34,6 @@ async def handle_file(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         await update.message.reply_text("❌ Upload failed.")
 
-# Bot startup
 if __name__ == '__main__':
     print("🚀 Bot starting...")
     app = ApplicationBuilder().token(BOT_TOKEN).build()
